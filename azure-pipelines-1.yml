@@ -3,10 +3,12 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+trigger:
+  branches:
+    include:
+      - azure-pipelines-terraform
 
-
-pool:
-  vmImage: ubuntu-latest
+pool: testpool
 
 steps:
 - script: echo Hello, world!
