@@ -13,23 +13,48 @@ stages:
     jobs:
       - job: Build
         displayName: Build
-        pool:
-          vmImage: ubuntu-latest
+        pool: testpool
         steps:
-
         - task: Docker@2
           inputs:
-            containerRegistry: 'evertonacr'
-            repository: '$(imagerepo)'
+            containerRegistry: 'acr_rm_connection'
+            repository: 'evertonacr'
             command: 'buildAndPush'
+            Dockerfile: '**/Dockerfile'
 
-  - stage: Deploy
-    displayName: deploy to aks
-    jobs:
-    - job: deploy
-      displayName: deploy do aks
-      pool: testpool
-      steps:
-        - task:
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)/s/kubernetes'
+            ArtifactName: 'manifests'
+            publishLocation: 'Container'
             
 
+  - stage: Deploy
+    displayName: deploy image
+    dependsOn: Build
+    jobs:
+      - job: deploy
+        displayName: deploy to aks
+        pool: testpool
+        steps:
+        - task: Docker@2
+          inputs:
+            containerRegistry: 'acr_rm_connection'
+            repository: 'evertonacr'
+            command: 'buildAndPush'
+            Dockerfile: '**/Dockerfile'
+
+        - task: DownloadBuildArtifacts@0
+          inputs:
+             buildType: 'current'
+             downloadType: 'single'
+             artifactName: 'manifests'
+             downloadPath: '$(System.ArtifactsDirectory)/manifests'
+            
+
+        - task: KubernetesManifest@0
+          inputs:
+              action: 'deploy'
+              kubernetesServiceConnection: 'aks_rm_service_connection'
+              namespace: 'default'
+              manifests: 'fillup'
