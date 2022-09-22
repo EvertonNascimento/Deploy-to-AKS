@@ -16,8 +16,20 @@ stages:
         pool:
           vmImage: ubuntu-latest
         steps:
+
         - task: Docker@2
-          displayName: build an image
           inputs:
+            containerRegistry: 'evertonacr'
+            repository: '$(imagerepo)'
             command: 'buildAndPush'
-            Dockerfile: '**/Dockerfile'
+
+  - stage: Deploy
+    displayName: deploy to aks
+    jobs:
+    - job: deploy
+      displayName: deploy do aks
+      pool: testpool
+      steps:
+        - task:
+            
+
