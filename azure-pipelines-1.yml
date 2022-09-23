@@ -46,9 +46,11 @@ stages:
             steps:
             - checkout: self
             - task: TerraformInstaller@0
+              displayname: terraform install
               inputs:
                 terraformVersion: 'latest'
             - task: TerraformTaskV3@3
+              displayname: terraform init
               inputs:
                   provider: 'azurerm'
                   command: 'init'
@@ -58,11 +60,13 @@ stages:
                   backendAzureRmContainerName: 'dummycontainer'
                   backendAzureRmKey: 'terraform.tfstate'
             - task: TerraformTaskV3@3
+              displayname: terraform plan
               inputs:
                 provider: 'azurerm'
                 command: 'plan'
                 environmentServiceNameAzureRM: 'Azure subscription 1(1)(5d1821a0-334a-49d0-9d10-e3de78691195)'
             - task: TerraformTaskV3@3
+              displayname: terraform apply
               inputs:
                 provider: 'azurerm'
                 command: 'apply'
