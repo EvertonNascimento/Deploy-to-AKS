@@ -54,7 +54,18 @@ stages:
 
         - task: KubernetesManifest@0
           inputs:
-              action: 'deploy'
-              kubernetesServiceConnection: 'aks_rm_service_connection'
-              namespace: 'default'
-              manifests: 'fillup'
+            action: 'createSecret'
+            kubernetesServiceConnection: 'aks_rm_connection'
+            namespace: 'default'
+            secretType: 'dockerRegistry'
+            secretName: 'dummysecret'
+            dockerRegistryEndpoint: 'acr_rm_connection'
+
+        - task: KubernetesManifest@0
+          inputs:
+                action: 'deploy'
+                kubernetesServiceConnection: 'aks_rm_connection'
+                namespace: 'default'
+                manifests: 'fillup'
+            
+      
