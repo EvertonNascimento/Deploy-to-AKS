@@ -15,16 +15,37 @@ stages:
     - job: validate
       continueOnError: false
       steps:
-        
       - task: TerraformInstaller@0
         inputs:
           terraformVersion: 'latest'
+
+      - task: TerraformTaskV3@3
+        inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'Azure subscription 1(1)(5d1821a0-334a-49d0-9d10-e3de78691195)'
+            backendAzureRmResourceGroupName: 'TestRG'
+            backendAzureRmStorageAccountName: 'evertondummystorage'
+            backendAzureRmContainerName: 'dummycontainer'
+            backendAzureRmKey: 'terraform.tfstate'
+      - task: TerraformTaskV3@3
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
     
 
 - stage: deploy
-
-
-
-
-
-
+  jobs:
+    - job: deploy
+      continueOnError: false
+      steps:
+      - task: TerraformTaskV3@3
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+      - task: TerraformTaskV3@3
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          environmentServiceNameAzureRM: 'Azure subscription 1(1)(5d1821a0-334a-49d0-9d10-e3de78691195)'
+        
