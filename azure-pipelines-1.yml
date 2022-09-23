@@ -45,10 +45,23 @@ stages:
             
             steps:
             - checkout: self
+            - task: TerraformInstaller@0
+              inputs:
+                terraformVersion: 'latest'
+            - task: TerraformTaskV3@3
+              inputs:
+                  provider: 'azurerm'
+                  command: 'init'
+                  backendServiceArm: 'Azure subscription 1(1)(5d1821a0-334a-49d0-9d10-e3de78691195)'
+                  backendAzureRmResourceGroupName: 'TestRG'
+                  backendAzureRmStorageAccountName: 'evertondummystorage'
+                  backendAzureRmContainerName: 'dummycontainer'
+                  backendAzureRmKey: 'terraform.tfstate'
             - task: TerraformTaskV3@3
               inputs:
                 provider: 'azurerm'
                 command: 'plan'
+                environmentServiceNameAzureRM: 'Azure subscription 1(1)(5d1821a0-334a-49d0-9d10-e3de78691195)'
             - task: TerraformTaskV3@3
               inputs:
                 provider: 'azurerm'
