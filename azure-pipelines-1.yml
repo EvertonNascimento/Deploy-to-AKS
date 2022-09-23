@@ -36,16 +36,22 @@ stages:
 
 - stage: deploy
   jobs:
-    - job: deploy
+    - deployment: deploy
       continueOnError: false
-      steps:
-      - task: TerraformTaskV3@3
-        inputs:
-          provider: 'azurerm'
-          command: 'plan'
-      - task: TerraformTaskV3@3
-        inputs:
-          provider: 'azurerm'
-          command: 'apply'
-          environmentServiceNameAzureRM: 'Azure subscription 1(1)(5d1821a0-334a-49d0-9d10-e3de78691195)'
-        
+      environment: dev
+      strategy: 
+        runOnce:
+          deploy:
+            
+            steps:
+            - checkout: self
+            - task: TerraformTaskV3@3
+              inputs:
+                provider: 'azurerm'
+                command: 'plan'
+            - task: TerraformTaskV3@3
+              inputs:
+                provider: 'azurerm'
+                command: 'apply'
+                environmentServiceNameAzureRM: 'Azure subscription 1(1)(5d1821a0-334a-49d0-9d10-e3de78691195)'
+              
