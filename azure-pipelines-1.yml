@@ -7,14 +7,24 @@ trigger:
   branches:
     include:
       - azure-pipelines-terraform
-
 pool: testpool
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: validate
+  jobs:
+    - job: validate
+      continueOnError: false
+      steps:
+        
+      - task: TerraformInstaller@0
+        inputs:
+          terraformVersion: 'latest'
+    
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- stage: deploy
+
+
+
+
+
+
